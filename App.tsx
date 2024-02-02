@@ -16,6 +16,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import Config from 'react-native-config';
 
 import {
   Colors,
@@ -61,6 +62,9 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  const config = Config.PROJECT_ENVIRONMENT;
+  console.log('config', config);
 
   return (
     <SafeAreaView style={backgroundStyle}>

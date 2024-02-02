@@ -81,6 +81,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        resValue "string", "build_config_package", "com.boilerplate"
     }
     signingConfigs {
         debug {
@@ -93,6 +94,8 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            applicationIdSuffix ".debug"
+
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -100,6 +103,16 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        developmentrelease {
+            initWith release
+            applicationIdSuffix ".development"
+            matchingFallbacks = ['release']
+        }
+        stagingrelease {
+            initWith release
+            applicationIdSuffix ".staging"
+            matchingFallbacks = ['release']
         }
     }
 }
@@ -116,4 +129,13 @@ dependencies {
     }
 }
 
+project.ext.envConfigFiles = [
+    debug: ".env.development",
+    developmentrelease: ".env.development", // Sentry: Renaming development -> developmentrelease as react-native gradle task doesn't output sourcemap unless "release" keyword is in the name
+    stagingrelease: ".env.staging", // Sentry: Renaming staging -> stagingrelease as react-native gradle task doesn't output sourcemap unless "release" keyword is in the name
+    release: ".env.production",
+]
+
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
